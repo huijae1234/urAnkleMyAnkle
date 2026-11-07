@@ -690,6 +690,7 @@ def update_dtable_page(page_current, sort_by, filters):
 
 @app.callback(
     Output("table-download", "data"),
+    Output("action-echo", "children", allow_duplicate=True),
     Input({"type": "csv-export-btn", "index": ALL}, "n_clicks"),
     State("filter-store", "data"),
     prevent_initial_call=True,
@@ -699,17 +700,20 @@ def export_dtable_csv(_clicks, filters):
     # 더 불린다 — write_seg와 동일하게 값이 0인 호출은 무시한다.
     trig = ctx.triggered[0] if ctx.triggered else None
     if not trig or not trig.get("value"):
-        return no_update
+        return no_update, no_update
     dataset_key = ctx.triggered_id["index"]
     if dataset_key not in ("raw", "daily"):
-        return no_update
+        return no_update, no_update
     try:
         assets, start, end = _filter_scope(filters)
         csv_bytes, filename = export_table_csv(dataset_key, assets=assets, start=start, end=end)
     except Exception:
         app.server.logger.exception("CSV 내보내기 실패: %s", dataset_key)
-        return no_update
-    return dcc.send_bytes(lambda buf: buf.write(csv_bytes), filename, type="text/csv")
+        return no_update, "CSV를 만들지 못했습니다. 조회 조건을 확인해 주세요."
+    # Vercel의 응답 크기 한도 안에 base64 파일과 JSON을 함께 담는다.
+    if os.environ.get("VERCEL") and len(csv_bytes) > 3_000_000:
+        return no_update, "CSV 용량이 큽니다. 기간이나 기계를 좁혀 다시 내려받아 주세요. 전체 자료는 GitHub 저장소에서 확인할 수 있습니다."
+    return dcc.send_bytes(lambda buf: buf.write(csv_bytes), filename, type="text/csv"), no_update
 
 
 if __name__ == "__main__":

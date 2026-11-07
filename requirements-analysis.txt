@@ -1,0 +1,9 @@
+# 기존 분석·노트북·시험 환경을 설치할 때 사용한다.
+-r requirements.txt
+matplotlib==3.9.2
+prophet==1.1.6
+cmdstanpy==1.2.5
+holidays==0.58
+ipykernel==6.29.5
+nbstripout==0.7.1
+pytest==8.3.3
