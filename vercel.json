@@ -4,7 +4,7 @@
   "functions": {
     "app.py": {
       "maxDuration": 60,
-      "includeFiles": "{assets/**,design/tokens.json,data/raw/synthetic_industrial_machine_data.csv,outputs/{machine_risk,pf_within_7d,current_state}/{comparison.csv,comparison_predictions.csv,comparison_config.json,feature_importance.csv},outputs/family_current/{metrics.csv,test_predictions.csv,feature_importance.csv},NanumGothic.ttf,NanumGothic-OFL.txt}"
+      "includeFiles": "{assets/**,design/tokens.json,data/raw/*.csv,outputs/**/*.csv,outputs/**/*.json,NanumGothic*}"
     }
   }
 }
